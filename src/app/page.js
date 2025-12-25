@@ -1,66 +1,54 @@
-import Image from "next/image";
+import { getTeams, createTeam, updateScore } from "../../lib/actions";
 import styles from "./page.module.css";
 
-export default function Home() {
+export default async function JudgesPage() {
+  const teams = await getTeams();
+
+  const categories = [
+    { id: "sustainability", label: "Sustainability (20%)" },
+    { id: "prototype", label: "Working Prototype (30%)" },
+    { id: "originality", label: "Originality (15%)" },
+    { id: "application", label: "Real Life App (15%)" },
+    { id: "finance", label: "Financial Model (10%)" },
+    { id: "presentation", label: "Presentation (10%)" },
+  ];
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Judge Panel - ElectroFuture 2030</h1>
+      
+      <form action={createTeam} className={styles.addForm}>
+        <input name="name" placeholder="New Team Name..." className={styles.input} required />
+        <button type="submit" className={styles.addButton}>Add Team</button>
+      </form>
+
+      <div className={styles.teamList}>
+        {teams.map((team) => (
+          <div key={team.id} className={styles.teamCard}>
+            <div className={styles.cardHeader}>
+              <h2>{team.name}</h2>
+              <span className={styles.totalBadge}>{team.totalScore}%</span>
+            </div>
+
+            <div className={styles.grid}>
+              {categories.map((cat) => (
+                <div key={cat.id} className={styles.scoreBox}>
+                  <label>{cat.label}</label>
+                  <div className={styles.controls}>
+                    <form action={updateScore.bind(null, team.id, cat.id, -1)}>
+                      <button className={styles.minusBtn}>-</button>
+                    </form>
+                    <span className={styles.scoreValue}>{team[cat.id]}</span>
+                    <form action={updateScore.bind(null, team.id, cat.id, 1)}>
+                      <button className={styles.plusBtn}>+</button>
+                    </form>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
