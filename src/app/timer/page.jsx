@@ -5,7 +5,7 @@ import styles from "./page.module.css";
 export default function Timer() {
   const [seconds, setSeconds] = useState(7 * 60);
   const [isRunning, setIsRunning] = useState(false);
-  const [tseconds, tsetSeconds] = useState(5 * 60);
+  const [tseconds, tsetSeconds] = useState(3 * 60);
   const [tisRunning, tsetIsRunning] = useState(false);
 
 
